@@ -22,9 +22,9 @@ Devuelve un porcentaje de diferencia (misMatchPercentage), útil para automatiza
 
 ## Detalles adicionales:
 
-*Región personalizada:* 
+1. *Región personalizada:* 
 Se pueden comparar solo partes específicas de las imágenes usando coordenadas.*Output configurable:* Personalización del color de las diferencias, transparencia del dif, o formato de imagen resultante.
-*Integración con herramientas de testing:* 
+2. *Integración con herramientas de testing:* 
 Muy utilizado junto con frameworks como Playwright, Puppeteer o Cypress para verificar visualmente cambios en interfaces.
 
 
@@ -117,7 +117,7 @@ getDiff();
 
 Una vez terminada la ejecucion, Los resultados aparecen en la consola para Chromium, Firefox y Webkit
 
-```
+```bash
 Execution finished. Check the report under the results folder
 {
   chromium: {
