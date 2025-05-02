@@ -5,25 +5,27 @@
 [ResembleJS](https://github.com/rsmbl/Resemble.js/blob/master/README.md) es una biblioteca de código abierto para comparación visual de imágenes. Es usada en procesos de prueba de regresión visual automatizada, donde se desea detectar diferencias entre dos capturas de pantalla o imágenes.
 
 ## Caracteristicas Principles:
-1. Comparación visual a nivel de píxel
+1. *Comparación visual a nivel de píxel*
 Detecta cambios precisos entre dos imágenes, resaltando diferencias por color, brillo, transparencia o desplazamientos.
-2. Imagen de diferencia (diff)
+2. *Imagen de diferencia (diff)*
 Genera automáticamente una imagen que resalta las diferencias encontradas.
-3. Métricas cuantitativas
+3. *Métricas cuantitativas*
 Devuelve un porcentaje de diferencia (misMatchPercentage), útil para automatizar decisiones.
-4. Opciones de comparación avanzadas
+4. *Opciones de comparación avanzadas*
 	- Ignorar antialiasing (suavizado).
 	- Ignorar diferencias de color.
 	- Ignorar canal alfa (transparencia).
 	- Escalar imágenes para ajustarlas si tienen diferentes tamaños.
-5.	Soporte para múltiples entornos
+5. *Soporte para múltiples entornos*
 	- Puede usarse en el navegador o en Node.js.
 
 
 ## Detalles adicionales:
 
-*Región personalizada:* Se pueden comparar solo partes específicas de las imágenes usando coordenadas.*Output configurable:* Personalización del color de las diferencias, transparencia del dif, o formato de imagen resultante.
-*Integración con herramientas de testing:* Muy utilizado junto con frameworks como Playwright, Puppeteer o Cypress para verificar visualmente cambios en interfaces.
+*Región personalizada:* 
+Se pueden comparar solo partes específicas de las imágenes usando coordenadas.*Output configurable:* Personalización del color de las diferencias, transparencia del dif, o formato de imagen resultante.
+*Integración con herramientas de testing:* 
+Muy utilizado junto con frameworks como Playwright, Puppeteer o Cypress para verificar visualmente cambios en interfaces.
 
 
 ## Requisitos Básicos
@@ -75,6 +77,7 @@ y la comparacion consiste en ajustar las configuracion para determinar que tan e
 vconst compareImages = require("resemblejs/compareImages");
 const fs = require("mz/fs");
 
+```javascript
 async function getDiff() {
     const options = {
         output: {
@@ -93,12 +96,15 @@ async function getDiff() {
         ignore: "antialiasing"
     };
 
+
     const data = await compareImages(await fs.readFile("./your-image-path/People.jpg"), await fs.readFile("./your-image-path/People2.jpg"), options);
 
     await fs.writeFile("./output.png", data.getBuffer());
 }
 
 getDiff();
+
+```
 
 ## Ejecución de Pruebas VRT
 
@@ -111,6 +117,7 @@ getDiff();
 
 Una vez terminada la ejecucion, Los resultados aparecen en la consola para Chromium, Firefox y Webkit
 
+```
 Execution finished. Check the report under the results folder
 {
   chromium: {
@@ -138,3 +145,4 @@ Execution finished. Check the report under the results folder
     analysisTime: 31
   }
 }
+```
