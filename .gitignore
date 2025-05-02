@@ -1,4 +1,3 @@
-
 # Logs
 logs
 *.log
@@ -46,7 +45,6 @@ build/Release
 node_modules/
 jspm_packages/
 test-results/
-results/
 
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -141,3 +139,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+*.png
+*.html

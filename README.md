@@ -23,23 +23,23 @@ Devuelve un porcentaje de diferencia (misMatchPercentage), útil para automatiza
 ## Detalles adicionales:
 
 1. *Región personalizada:* 
-Se pueden comparar solo partes específicas de las imágenes usando coordenadas.*Output configurable:* Personalización del color de las diferencias, transparencia del dif, o formato de imagen resultante.
-2. *Integración con herramientas de testing:* 
+Se pueden comparar solo partes específicas de las imágenes usando coordenadas.
+2. *Output configurable:* Personalización del color de las diferencias, transparencia del dif, o formato de imagen resultante.
+3. *Integración con herramientas de testing:* 
 Muy utilizado junto con frameworks como Playwright, Puppeteer o Cypress para verificar visualmente cambios en interfaces.
 
 
 ## Requisitos Básicos
 
-- Node.js (versión 18.x.x). para una mayor compatibilidad.
+- Node.js (versión 20 o superior). Recomendamos utilizar la versión `lts/iron`.
 - npm o yarn para la gestión de dependencias.
-
 
 ## Instalación
 
-Instala las dependencias necesarias utilizando npm: En el ejemplo se usa 18.18.2
+Instala las dependencias necesarias utilizando npm:
 
 ```bash
-npm install 18.18.2
+npm install
 ```
 
 ## Configuracion
@@ -106,43 +106,57 @@ getDiff();
 
 ```
 
-## Ejecución de Pruebas VRT
+## Ejecución de Pruebas
 
-- Para ejecutar las pruebas
+Dado que se utiliza un archivo JavaScript para la configuración de la herramienta, en el archivo **package.json** se definieron los siguientes comandos:
 
-    ```bash
-    node index.js
-    
-    ```
+- Para ejecutar las pruebas en modo headless:
 
-Una vez terminada la ejecucion, Los resultados aparecen en la consola para Chromium, Firefox y Webkit
+  ```bash
+  # Ejecución de las pruebas de regresión visual utilizando el archivo backstop.js
+  npm run test
+  ```
 
-```bash
-Execution finished. Check the report under the results folder
-{
-  chromium: {
-    isSameDimensions: true,
-    dimensionDifference: { width: 0, height: 0 },
-    rawMisMatchPercentage: 1.9823133680555556,
-    misMatchPercentage: '1.98',
-    diffBounds: { top: 58, left: 14, bottom: 305, right: 701 },
-    analysisTime: 38
-  },
-  webkit: {
-    isSameDimensions: true,
-    dimensionDifference: { width: 0, height: 0 },
-    rawMisMatchPercentage: 1.8945312499999998,
-    misMatchPercentage: '1.89',
-    diffBounds: { top: 58, left: 14, bottom: 286, right: 701 },
-    analysisTime: 43
-  },
-  firefox: {
-    isSameDimensions: true,
-    dimensionDifference: { width: 0, height: 0 },
-    rawMisMatchPercentage: 1.9097222222222223,
-    misMatchPercentage: '1.91',
-    diffBounds: { top: 61, left: 14, bottom: 329, right: 701 },
-    analysisTime: 31
+  Una vez terminada la ejecucion, Los resultados aparecen en la consola para Chromium, Firefox y Webkit
+
+  ```bash
+  Execution finished. Check the report under the results folder
+  {
+    chromium: {
+      isSameDimensions: true,
+      dimensionDifference: { width: 0, height: 0 },
+      rawMisMatchPercentage: 1.9823133680555556,
+      misMatchPercentage: '1.98',
+      diffBounds: { top: 58, left: 14, bottom: 305, right: 701 },
+      analysisTime: 38
+    },
+    webkit: {
+      isSameDimensions: true,
+      dimensionDifference: { width: 0, height: 0 },
+      rawMisMatchPercentage: 1.8945312499999998,
+      misMatchPercentage: '1.89',
+      diffBounds: { top: 58, left: 14, bottom: 286, right: 701 },
+      analysisTime: 43
+    },
+    firefox: {
+      isSameDimensions: true,
+      dimensionDifference: { width: 0, height: 0 },
+      rawMisMatchPercentage: 1.9097222222222223,
+      misMatchPercentage: '1.91',
+      diffBounds: { top: 61, left: 14, bottom: 329, right: 701 },
+      analysisTime: 31
+    }
   }
-}
-```
+  ```
+
+- Para ver los resultados de las pruebas uan vez termine la ejecucion:
+
+  ```bash
+  npx playwright show-report
+  ```
+
+- Para generar el reporte básico con la generación de imágenes
+
+  ```bash
+  npm run report
+  ```
