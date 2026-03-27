@@ -1,48 +1,79 @@
-function browser(b){
-    return `<div class=" browser" id="test0">
+import fs from "fs";
+import path from "path";
+import { createRequire } from "module";
+import vrtConfig from "./vrt.config.json" with { type: "json" };
+
+const require = createRequire(import.meta.url);
+
+const TEST_OUTPUT_DIR = "./test-results";
+const OUTPUT_FOLDER_PREFIX = "example-color-palette-vrt-";
+const { url: PAGE_URL } = vrtConfig;
+
+function browserSection(browserName, result) {
+  const mismatch = result ? `${result.misMatchPercentage}` : "N/A";
+  return `<div class="browser" id="browser-${browserName}">
+    <h2>${browserName} &mdash; Mismatch: ${mismatch}</h2>
     <div class="imgline">
       <div class="imgcontainer">
-        <span class="imgname">Reference</span>
-        <img class="img2" src="before-${b}.png" id="refImage" label="Reference">
+        <span class="imgname">Reference (Before)</span>
+        <img class="img2" src="before-${browserName}.png" id="refImage" label="Reference">
       </div>
       <div class="imgcontainer">
-        <span class="imgname">Test</span>
-        <img class="img2" src="after-${b}.png" id="testImage" label="Test">
+        <span class="imgname">Test (After)</span>
+        <img class="img2" src="after-${browserName}.png" id="testImage" label="Test">
       </div>
     </div>
     <div class="imgline">
       <div class="imgcontainer">
         <span class="imgname">Diff</span>
-        <img class="imgfull" src="./compare-${b}.png" id="diffImage" label="Diff">
+        <img class="imgfull" src="compare-${browserName}.png" id="diffImage" label="Diff">
       </div>
     </div>
-  </div>`
+  </div>`;
 }
 
-function createReport(resultInfo){
-    return `
+function createReport(url, browserSections) {
+  return `
     <html>
         <head>
             <title> VRT Report </title>
             <link href="index.css" type="text/css" rel="stylesheet">
         </head>
         <body>
-            <h1>Report for 
-                 <a href="${resultInfo.url}"> ${resultInfo.url}</a>
+            <h1>Report for
+                 <a href="${url}"> ${url}</a>
             </h1>
-            
             <div id="visualizer">
-                ${resultInfo.browsers.map(b=>browser(b))}
+                ${browserSections.join("")}
             </div>
         </body>
-    </html>`
+    </html>`;
 }
 
-const fs = require("fs");
-const resultInfo = {
-  browsers: ["chromium"],
-  url: "https://monitor177.github.io/color-palette"
-};
+if (!fs.existsSync(TEST_OUTPUT_DIR)) {
+  console.error(`Output directory not found: ${TEST_OUTPUT_DIR}. Run tests first.`);
+  process.exit(1);
+}
 
-fs.writeFileSync(`./test-results/example-color-palette-vrt-chromium/index.html`, createReport(resultInfo));
-fs.copyFileSync('./public/index.css', `./test-results/example-color-palette-vrt-chromium/index.css`);
+const browserFolders = fs
+  .readdirSync(TEST_OUTPUT_DIR)
+  .filter((name) => name.startsWith(OUTPUT_FOLDER_PREFIX));
+
+if (browserFolders.length === 0) {
+  console.error(`No test result folders found matching '${OUTPUT_FOLDER_PREFIX}*'. Run tests first.`);
+  process.exit(1);
+}
+
+for (const folder of browserFolders) {
+  const browserName = folder.replace(OUTPUT_FOLDER_PREFIX, "");
+  const outputDir = path.join(TEST_OUTPUT_DIR, folder);
+  const resultFile = path.join(outputDir, `result-${browserName}.json`);
+  let result = null;
+  if (fs.existsSync(resultFile)) {
+    result = JSON.parse(fs.readFileSync(resultFile, "utf8"));
+  }
+  const reportHtml = createReport(PAGE_URL, [browserSection(browserName, result)]);
+  fs.writeFileSync(path.join(outputDir, "index.html"), reportHtml);
+  fs.copyFileSync("./public/index.css", path.join(outputDir, "index.css"));
+  console.log(`VRT report generated: ${outputDir}/index.html`);
+}
