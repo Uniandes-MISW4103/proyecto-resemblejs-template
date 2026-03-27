@@ -1,20 +1,25 @@
 import { test } from "@playwright/test";
 import fs from "fs";
 import { PNG } from "pngjs";
-import { options } from "../vrt.config";
+import { createRequire } from "module";
+import vrtConfig from "../vrt.config.json" with { type: "json" };
+
+const require = createRequire(import.meta.url);
+const compareImages = require("resemblejs/compareImages");
+
+const { options } = vrtConfig;
 
 test.describe("color-palette", () => {
-  const compareImages = require("resemblejs/compareImages");
-
   let beforePath = "";
   let afterPath = "";
   let comparePath = "";
-  let resultInfo = {};
+  let resultPath = "";
 
   test.beforeAll(async ({ browserName }, testInfo) => {
     beforePath = testInfo.outputPath(`before-${browserName}.png`);
     afterPath = testInfo.outputPath(`after-${browserName}.png`);
     comparePath = testInfo.outputPath(`compare-${browserName}.png`);
+    resultPath = testInfo.outputPath(`result-${browserName}.json`);
   });
 
   test("vrt", async ({ page, browserName }) => {
@@ -28,7 +33,7 @@ test.describe("color-palette", () => {
     const img2 = PNG.sync.read(fs.readFileSync(afterPath));
 
     const data = await compareImages(img1, img2, options);
-    resultInfo[browserName] = {
+    const resultData = {
       isSameDimensions: data.isSameDimensions,
       dimensionDifference: data.dimensionDifference,
       rawMisMatchPercentage: data.rawMisMatchPercentage,
@@ -36,10 +41,15 @@ test.describe("color-palette", () => {
       diffBounds: data.diffBounds,
       analysisTime: data.analysisTime,
     };
+
     fs.writeFileSync(comparePath, data.getBuffer());
+    fs.writeFileSync(resultPath, JSON.stringify(resultData, null, 2));
   });
 
   test.afterAll(async ({ browserName }) => {
-    console.log(`ResultInfo ${browserName}`, resultInfo[browserName]);
+    if (fs.existsSync(resultPath)) {
+      const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
+      console.log(`[${browserName}] VRT completed. Mismatch: ${result.misMatchPercentage}`);
+    }
   });
 });
