@@ -25,7 +25,7 @@
   "main": "playwright.config.js",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24"
   },
   "scripts": {
     "prepare": "npx playwright install chromium",
