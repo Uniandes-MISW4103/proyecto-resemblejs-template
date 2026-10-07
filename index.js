@@ -1,9 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { createRequire } from "module";
 import vrtConfig from "./vrt.config.json" with { type: "json" };
-
-const require = createRequire(import.meta.url);
 
 const TEST_OUTPUT_DIR = "./test-results";
 const OUTPUT_FOLDER_PREFIX = "example-color-palette-vrt-";
