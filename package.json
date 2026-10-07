@@ -33,10 +33,12 @@
     "report": "node index.js"
   },
   "dependencies": {
-    "@playwright/test": "^1.52.0",
-    "@types/node": "^22.14.1",
-    "canvas": "^3.1.0",
-    "pngjs": "^7.0.0",
-    "resemblejs": "^5.0.0"
+    "@playwright/test": "~1.63.0",
+    "canvas": "~3.2.3",
+    "pngjs": "~7.0.0",
+    "resemblejs": "~5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "~24.19.1"
   }
 }
