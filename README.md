@@ -50,8 +50,9 @@ capturas `before-*.png`, `after-*.png` y la diferencia `compare-*.png`.
 misw-4103-resemblejs/
 ├── .nvmrc
 ├── package.json
+├── abp.cjs                # lee la configuración de la aplicación bajo pruebas (.env)
 ├── playwright.config.js   # configuración de Playwright Test
-├── vrt.config.json        # URL mostrada en el reporte y opciones de ResembleJS
+├── vrt.config.json        # página del ejemplo y opciones de ResembleJS
 ├── index.js               # genera el reporte HTML de imágenes
 ├── public/index.css       # estilos del reporte
 └── e2e/
@@ -63,10 +64,23 @@ misw-4103-resemblejs/
 
 ## Configuración
 
-- **`playwright.config.js`**: `use.baseURL` es la URL base de la aplicación (por defecto
-  `https://monitor177.github.io`); `outputDir` es `./test-results`; solo se usa Chromium.
+La URL de las dos versiones y el administrador de la aplicación bajo pruebas (ABP) están en el
+archivo `.env` de la raíz del repositorio, el mismo que usa `npm run abp:up` para desplegar Ghost. No
+los copien en el módulo: `abp.cjs` lee ese archivo. Las variables disponibles son `ABP_URL` (versión
+base), `ABP_RC_URL` (versión nueva), `ABP_ADMIN_NAME`, `ABP_ADMIN_EMAIL` y `ABP_ADMIN_PASSWORD`. Una
+variable de entorno con el mismo nombre tiene prioridad sobre el `.env`; fuera de un repositorio del
+proyecto (sin `.env`) se usan los valores por defecto de `abp.cjs`. Las pruebas importan las variables así:
+
+```javascript
+import abp from "../abp.cjs";
+
+await page.goto(`${abp.ABP_RC_URL}/ghost/`);
+```
+
+- **`playwright.config.js`**: `use.baseURL` es `ABP_URL`, la versión base de la aplicación
+  (`page.goto("/ghost/")`); `outputDir` es `./test-results`; solo se usa Chromium.
 - **`vrt.config.json`**:
-  - `url`: URL que se muestra en el reporte.
+  - `url`: página que compara el ejemplo y que se muestra en el reporte.
   - `options`: opciones de `compareImages` de ResembleJS, por ejemplo `ignore` (`"antialiasing"`,
     `"colors"`, `"alpha"`, `"less"`, `"nothing"`), `scaleToSameSize` y `output` (color y tipo de
     resaltado de las diferencias). Ver la
@@ -74,15 +88,17 @@ misw-4103-resemblejs/
 
 ## Ejemplo incluido
 
-`e2e/example.spec.js` abre `https://monitor177.github.io/color-palette`, toma una captura, hace clic
-en "Generar nueva paleta" (`#generate`, que cambia los colores al azar), toma otra captura y las
-compara con ResembleJS. Guarda la imagen de diferencias y un `result-<navegador>.json` con
+`e2e/example.spec.js` abre la página de registro del demo
+[angular-6-registration-login-example](https://angular-6-registration-login-example.stackblitz.io) alojado en StackBlitz (no la ABP, `url` de
+`vrt.config.json`), inicia el proyecto y toma una captura; llena el formulario con el nombre, el
+correo y la contraseña de `ABP_ADMIN_*`, toma otra captura y las compara con ResembleJS. Muestra cómo
+usar las credenciales del `.env` sin resolver las pruebas del proyecto. Guarda la imagen de diferencias y un `result-<navegador>.json` con
 `misMatchPercentage`, `diffBounds` y otros datos; `report` arma una página con las tres imágenes y el
 porcentaje.
 
 El ejemplo **no tiene aserciones**: siempre pasa y sirve para ver el flujo completo. En sus pruebas
-usen `misMatchPercentage` para decidir si hay una regresión, y comparen la misma página en dos
-versiones de la aplicación.
+usen `misMatchPercentage` para decidir si hay una regresión, y comparen la misma página en las dos
+versiones de la aplicación (`ABP_URL` y `ABP_RC_URL`).
 
 ## Sobre `canvas`
 

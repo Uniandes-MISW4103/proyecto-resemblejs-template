@@ -3,7 +3,7 @@ import path from "path";
 import vrtConfig from "./vrt.config.json" with { type: "json" };
 
 const TEST_OUTPUT_DIR = "./test-results";
-const OUTPUT_FOLDER_PREFIX = "example-color-palette-vrt-";
+const OUTPUT_FOLDER_PREFIX = "example-registration-vrt-";
 const { url: PAGE_URL } = vrtConfig;
 
 function browserSection(browserName, result) {
